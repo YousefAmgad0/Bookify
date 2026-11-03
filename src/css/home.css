@@ -1,0 +1,191 @@
+/* ==============================
+   Hero Section
+============================== */
+
+.hero-section {
+  aspect-ratio: 16 / 9;
+
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.55) 55%,
+      rgba(255, 255, 255, 0.1)
+    ),
+    url("../assets/hero.png");
+
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Hero Content */
+
+.hero-content {
+  max-width: 750px;
+  padding: 2rem 0;
+}
+
+.hero-content h1 {
+  max-width: 650px;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  line-height: 1.15;
+}
+
+/* ==============================
+   Featured Books
+============================== */
+
+.featured-books {
+  background-color: var(--color-surface);
+}
+
+.book-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.book-cover {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+
+.book-card .card-text {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.book-card .book-author {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.book-card .card-footer {
+  background-color: var(--color-background);
+  border-top: 1px solid #f3f4f6;
+}
+
+.book-card .btn {
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ==============================
+   Browse Categories
+============================== */
+
+.browse-categories {
+  background-color: var(--color-background);
+}
+
+.category-card {
+  border-radius: 12px;
+}
+
+.category-info {
+  min-width: 0;
+}
+
+.category-info .card-title {
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.category-info p {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* ==============================
+   Interactive States
+============================== */
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-content .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .book-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  }
+}
+
+/* Keyboard Accessibility */
+
+.book-card:focus-within {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* ==============================
+   Responsive Design
+============================== */
+
+/* Tablets */
+
+@media (max-width: 768px) {
+  .hero-section {
+    aspect-ratio: auto;
+    min-height: 650px;
+    background-position: center;
+    background-attachment: scroll;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(2rem, 7vw, 3rem);
+  }
+}
+
+/* Small Screens */
+
+@media (max-width: 576px) {
+  .hero-section {
+    min-height: 600px;
+  }
+
+  .hero-content .btn {
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra Small Screens */
+
+@media (max-width: 400px) {
+  .category-card .card-body {
+    gap: 0.5rem;
+  }
+
+  .category-info .card-title {
+    font-size: 0.9rem;
+  }
+
+  .category-info p {
+    font-size: 0.7rem;
+  }
+
+  .category-arrow {
+    display: none;
+  }
+}
+
+/* Reduced Motion Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  .book-card,
+  .hero-content .btn {
+    transition: none;
+  }
+
+  .book-card:hover,
+  .hero-content .btn:hover {
+    transform: none;
+  }
+}
