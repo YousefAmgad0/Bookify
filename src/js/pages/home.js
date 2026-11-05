@@ -2,7 +2,18 @@ import "../modules/ui.js";
 import "../../css/home.css";
 import { createNavbar } from "../components/navbar.js";
 import { createFooter } from "../components/footer.js";
+import { getSearchBooks } from "../modules/api.js";
+import { formatBooks } from "../modules/books.js";
+import { createBookCard } from "../components/bookCard.js";
+import { addBookToLibrary, isBookInLibrary } from "../modules/storage.js";
 
+async function loadFeaturedBooks() {
+  const data = await getSearchBooks("javascript", 10);
+  const books = formatBooks(data.docs);
+  return books;
+}
+const books = await loadFeaturedBooks();
+console.log(books[0].coverUrl); // Log the cover URL of the first book
 document.querySelector("#app").innerHTML = /* html */ `
   ${createNavbar("home")}
 
@@ -50,44 +61,14 @@ document.querySelector("#app").innerHTML = /* html */ `
 
         <p class="lead text-muted">Handpicked books we think you'll love.</p>
 
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <div
+          id="featured-books-container"
+          class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4"
+        >
           <!-- Book Card 1 -->
-          <div class="col">
-            <div class="card book-card h-100 overflow-hidden">
-              <img
-                src="https://placehold.co/300x400"
-                class="card-img-top book-cover"
-                alt="The Great Adventure book cover"
-              />
+          ${books.map((book) => createBookCard(book)).join("")}
 
-              <div class="card-body p-4">
-                <h5 class="card-title fw-semibold fs-5">The Great Adventure</h5>
-
-                <p class="card-text">
-                  An inspiring story about discovery and adventure.
-                </p>
-
-                <p class="book-author mb-0">by John Doe</p>
-              </div>
-
-              <div class="card-footer d-flex gap-2 p-3">
-                <button type="button" class="btn btn-sm btn-primary flex-fill">
-                  Add to Library
-                </button>
-
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary flex-fill"
-                >
-                  View Details
-                </button>
-              </div>
-            </div>
-          </div>
           <!-- End Book Card 1 -->
-
-          <!-- Book Card 2 -->
-          <!-- We'll add the second book when connecting the API. -->
         </div>
       </div>
     </section>
@@ -185,3 +166,27 @@ document.querySelector("#app").innerHTML = /* html */ `
 
   ${createFooter()}
 `;
+
+const featuredBooksContainer = document.querySelector(
+  "#featured-books-container",
+);
+
+featuredBooksContainer.addEventListener("click", (event) => {
+  const addToLibraryButton = event.target.closest(
+    '[data-action="add-to-library"]',
+  );
+
+  if (addToLibraryButton) {
+    const bookId = addToLibraryButton.dataset.bookId;
+
+    const book = books.find((book) => book.id === bookId);
+
+    if (book && !isBookInLibrary(bookId)) {
+      addBookToLibrary(book);
+      addToLibraryButton.textContent = "Added to Library";
+      addToLibraryButton.classList.remove("btn-primary");
+      addToLibraryButton.classList.add("btn-secondary");
+      addToLibraryButton.disabled = true;
+    }
+  }
+});

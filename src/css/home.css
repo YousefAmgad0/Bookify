@@ -41,41 +41,6 @@
   background-color: var(--color-surface);
 }
 
-.book-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.book-cover {
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-}
-
-.book-card .card-text {
-  color: var(--color-muted);
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
-
-.book-card .book-author {
-  color: var(--color-muted);
-  font-size: 0.85rem;
-}
-
-.book-card .card-footer {
-  background-color: var(--color-background);
-  border-top: 1px solid #f3f4f6;
-}
-
-.book-card .btn {
-  font-size: 0.85rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
 /* ==============================
    Browse Categories
 ============================== */
@@ -107,22 +72,11 @@
    Interactive States
 ============================== */
 
-@media (hover: hover) and (pointer: fine) {
-  .hero-content .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  }
-
-  .book-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-  }
-}
-
 /* Keyboard Accessibility */
 
-.book-card:focus-within {
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+.hero-content .btn:focus-visible {
+  outline: 3px solid rgb(79 70 229 / 35%);
+  outline-offset: 3px;
 }
 
 /* ==============================
@@ -179,13 +133,7 @@
 /* Reduced Motion Accessibility */
 
 @media (prefers-reduced-motion: reduce) {
-  .book-card,
   .hero-content .btn {
     transition: none;
-  }
-
-  .book-card:hover,
-  .hero-content .btn:hover {
-    transform: none;
   }
 }
