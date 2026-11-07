@@ -132,6 +132,3 @@ Saved books are stored locally in the browser, so the application does not requi
 **Yousef Amgad**
 
 [GitHub Profile](https://github.com/YousefAmgad0)
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
