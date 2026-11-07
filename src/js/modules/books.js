@@ -1,10 +1,10 @@
 export function formatBooks(books) {
   return books.map((book) => ({
-    title: book.title,
+    title: book.title || "Untitled",
     authors: book.author_name?.join(", ") || "Unknown Author",
     coverUrl: getBookCover(book.cover_i),
     publishYear: book.first_publish_year,
-    id: book.key.split("/").pop(),
+    id: book.key?.split("/").pop(),
   }));
 }
 

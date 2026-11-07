@@ -3,19 +3,23 @@ import "../../css/library.css";
 import { createNavbar } from "../components/navbar.js";
 import { createFooter } from "../components/footer.js";
 import { getLibraryBooks, removeBookFromLibrary } from "../modules/storage.js";
+import { getBookDetails, getAuthorDetails } from "../modules/api.js";
+import { getBookCover } from "../modules/books.js";
 import { createBookCard } from "../components/bookCard.js";
-
+import { createBookModal, createBookDetails } from "../components/bookModal.js";
+import { Modal } from "bootstrap";
+import { loadBookDetails } from "../modules/bookActions.js";
 const libraryBooks = getLibraryBooks();
 
 document.querySelector("#app").innerHTML = /* html */ `
   ${createNavbar("library")}
-  <main class="container py-5 ">
+  <main class="container py-5">
     <header class="library-header">
       <h1 class="fw-bold mb-2">My Library</h1>
       <p class="text-muted mb-0">Your personal book collection.</p>
     </header>
 
-    <section class="py-4 " aria-label="Your saved books">
+    <section class="py-4" aria-label="Your saved books">
       <div
         class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4"
         id="library-books-container"
@@ -46,21 +50,30 @@ document.querySelector("#app").innerHTML = /* html */ `
       </div>
     </section>
   </main>
-  ${createFooter()}
+  ${createFooter()} ${createBookModal()}
 `;
+
 const libraryBooksContainer = document.querySelector(
   "#library-books-container",
 );
 
-libraryBooksContainer.addEventListener("click", (event) => {
+const bookDetailsModalElement = document.querySelector("#book-details-modal");
+
+const bookDetailsModal = new Modal(bookDetailsModalElement);
+
+const bookDetailsContent = document.querySelector("#book-details-content");
+
+libraryBooksContainer.addEventListener("click", async (event) => {
   const removeButton = event.target.closest(
     '[data-action="remove-from-library"]',
   );
 
   if (removeButton) {
     const bookId = removeButton.dataset.bookId;
+
     removeBookFromLibrary(bookId);
-    removeButton.closest(".col").remove(); // Remove the book card from the DOM
+    removeButton.closest(".col").remove();
+
     if (libraryBooksContainer.children.length === 0) {
       libraryBooksContainer.innerHTML = /* html */ `
         <div class="col-12 w-100 d-flex justify-content-center py-5">
@@ -83,5 +96,15 @@ libraryBooksContainer.addEventListener("click", (event) => {
         </div>
       `;
     }
+  }
+
+  const viewDetailsButton = event.target.closest(
+    '[data-action="view-details"]',
+  );
+
+  if (viewDetailsButton) {
+    const bookId = viewDetailsButton.dataset.bookId;
+
+    await loadBookDetails(bookId, bookDetailsModal, bookDetailsContent);
   }
 });

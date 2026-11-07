@@ -2,18 +2,24 @@ import "../modules/ui.js";
 import "../../css/home.css";
 import { createNavbar } from "../components/navbar.js";
 import { createFooter } from "../components/footer.js";
-import { getSearchBooks } from "../modules/api.js";
-import { formatBooks } from "../modules/books.js";
+import {
+  getSearchBooks,
+  getBookDetails,
+  getAuthorDetails,
+} from "../modules/api.js";
+import { formatBooks, getBookCover } from "../modules/books.js";
+import { createBookModal, createBookDetails } from "../components/bookModal.js";
 import { createBookCard } from "../components/bookCard.js";
-import { addBookToLibrary, isBookInLibrary } from "../modules/storage.js";
-
+import { Modal } from "bootstrap";
+import { loadBookDetails, handleAddToLibrary } from "../modules/bookActions.js";
 async function loadFeaturedBooks() {
-  const data = await getSearchBooks("javascript", 10);
+  const data = await getSearchBooks("Harry Potter", 15);
   const books = formatBooks(data.docs);
   return books;
 }
+
 const books = await loadFeaturedBooks();
-console.log(books[0].coverUrl); // Log the cover URL of the first book
+
 document.querySelector("#app").innerHTML = /* html */ `
   ${createNavbar("home")}
 
@@ -65,10 +71,7 @@ document.querySelector("#app").innerHTML = /* html */ `
           id="featured-books-container"
           class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4"
         >
-          <!-- Book Card 1 -->
           ${books.map((book) => createBookCard(book)).join("")}
-
-          <!-- End Book Card 1 -->
         </div>
       </div>
     </section>
@@ -164,14 +167,20 @@ document.querySelector("#app").innerHTML = /* html */ `
     </section>
   </main>
 
-  ${createFooter()}
+  ${createFooter()} ${createBookModal()}
 `;
 
 const featuredBooksContainer = document.querySelector(
   "#featured-books-container",
 );
 
-featuredBooksContainer.addEventListener("click", (event) => {
+const bookDetailsModalElement = document.querySelector("#book-details-modal");
+
+const bookDetailsModal = new Modal(bookDetailsModalElement);
+
+const bookDetailsContent = document.querySelector("#book-details-content");
+
+featuredBooksContainer.addEventListener("click", async (event) => {
   const addToLibraryButton = event.target.closest(
     '[data-action="add-to-library"]',
   );
@@ -181,12 +190,18 @@ featuredBooksContainer.addEventListener("click", (event) => {
 
     const book = books.find((book) => book.id === bookId);
 
-    if (book && !isBookInLibrary(bookId)) {
-      addBookToLibrary(book);
-      addToLibraryButton.textContent = "Added to Library";
-      addToLibraryButton.classList.remove("btn-primary");
-      addToLibraryButton.classList.add("btn-secondary");
-      addToLibraryButton.disabled = true;
+    if (book) {
+      handleAddToLibrary(book, addToLibraryButton);
     }
+  }
+
+  const viewDetailsButton = event.target.closest(
+    '[data-action="view-details"]',
+  );
+
+  if (viewDetailsButton) {
+    const bookId = viewDetailsButton.dataset.bookId;
+
+    await loadBookDetails(bookId, bookDetailsModal, bookDetailsContent);
   }
 });
